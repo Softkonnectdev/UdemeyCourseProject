@@ -8,14 +8,14 @@ using System.Runtime.Caching;
 
 namespace MyShop.DataAccess.InMemory
 {
-    public class ProudctRepository
+    public class ProductRepository
     {
 
         ObjectCache cache = MemoryCache.Default;
 
         List<Product> products;
 
-        public ProudctRepository()
+        public ProductRepository()
         {
             products = cache["products"] as List<Product>;
 
