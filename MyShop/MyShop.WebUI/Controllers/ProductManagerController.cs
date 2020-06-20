@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using MyShop.DataAccess.InMemory;
 using MyShop.Core.Models;
-
+using MyShop.Core.ViewModels;
 
 namespace MyShop.WebUI.Controllers
 {
@@ -14,9 +14,11 @@ namespace MyShop.WebUI.Controllers
     {
 
         ProductRepository context;
+        ProductCategoryRepository Catecontext;
         public ProductManagerController()
         {
             context = new ProductRepository();
+            Catecontext = new ProductCategoryRepository();
         }
 
 
@@ -24,13 +26,17 @@ namespace MyShop.WebUI.Controllers
         public ActionResult Index()
         {
             List<Product> products = context.ListOfProducts().ToList();
-
             return View(products);
         }
 
         public ActionResult Create()
         {
+            //ProductManagerViewModel viewModel = new ProductManagerViewModel();
+
+            //viewModel.ProductCates = Catecontext.ListOfProductCates();
+            //viewModel.Product = new Product();
             Product prod = new Product();
+            ViewBag.Id = new SelectList(Catecontext.ListOfProductCates(), "Id", "Name");
             return View(prod);
         }
 
@@ -62,8 +68,10 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-
-                return View(prod);
+                ProductManagerViewModel viewModel = new ProductManagerViewModel();
+                viewModel.Product = prod;
+                viewModel.ProductCates = Catecontext.ListOfProductCates();
+                return View(viewModel);
             }
         }
 
