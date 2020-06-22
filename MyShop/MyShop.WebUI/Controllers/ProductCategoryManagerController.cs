@@ -10,17 +10,17 @@ namespace MyShop.WebUI.Controllers
 {
     public class ProductCategoryManagerController : Controller
     {
-        ProductCategoryRepository context;
+        InMemoryRepository<ProductCategory> context;
         public ProductCategoryManagerController()
         {
-            context = new ProductCategoryRepository();
+            context = new InMemoryRepository<ProductCategory>();
         }
 
 
         // GET: ProductManager
         public ActionResult Index()
         {
-            List<ProductCategory> productCates = context.ListOfProductCates().ToList();
+            List<ProductCategory> productCates = context.Collection().ToList();
 
             return View(productCates);
         }
@@ -42,8 +42,8 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                context.InsertProduct(prodCate);
-                context.CommitToCache();
+                context.Insert(prodCate);
+                context.Commit();
 
                 return RedirectToAction("Index");
             }
@@ -51,7 +51,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Edit(string Id)
         {
-            var prodCate = context.FindProd(Id);
+            var prodCate = context.Find(Id);
 
             if (prodCate == null)
             {
@@ -70,7 +70,7 @@ namespace MyShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ProductCategory pc, string Id)
         {
-            var prodCateToEdit = context.FindProd(Id);
+            var prodCateToEdit = context.Find(Id);
 
             if (prodCateToEdit != null)
             {
@@ -85,7 +85,7 @@ namespace MyShop.WebUI.Controllers
                 {
                     prodCateToEdit.Name = pc.Name;
 
-                    context.CommitToCache();
+                    context.Commit();
 
                     return RedirectToAction("Index");
                 }
@@ -100,7 +100,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Delete(string Id)
         {
-            var prodCateToDelete = context.FindProd(Id);
+            var prodCateToDelete = context.Find(Id);
             if (prodCateToDelete == null)
             {
                 throw new Exception("Product Category does not exist!");
@@ -117,7 +117,7 @@ namespace MyShop.WebUI.Controllers
         [ActionName("Delete")]
         public ActionResult ConfrimDelete(string Id)
         {
-            var prodCateToDelete = context.FindProd(Id);
+            var prodCateToDelete = context.Find(Id);
 
             if (prodCateToDelete == null)
             {
@@ -125,8 +125,8 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                context.Delete(Id);
-                context.CommitToCache();
+                context.Delete(prodCateToDelete);
+                context.Commit();
                 return RedirectToAction("Index");
             }
         }

@@ -13,19 +13,19 @@ namespace MyShop.WebUI.Controllers
     public class ProductManagerController : Controller
     {
 
-        ProductRepository context;
-        ProductCategoryRepository Catecontext;
+        InMemoryRepository<Product> context;
+        InMemoryRepository<ProductCategory> Catecontext;
         public ProductManagerController()
         {
-            context = new ProductRepository();
-            Catecontext = new ProductCategoryRepository();
+            context = new InMemoryRepository<Product>();
+            Catecontext = new InMemoryRepository<ProductCategory>();
         }
 
 
         // GET: ProductManager
         public ActionResult Index()
         {
-            List<Product> products = context.ListOfProducts().ToList();
+            List<Product> products = context.Collection().ToList();
             return View(products);
         }
 
@@ -36,7 +36,7 @@ namespace MyShop.WebUI.Controllers
             //viewModel.ProductCates = Catecontext.ListOfProductCates();
             //viewModel.Product = new Product();
             Product prod = new Product();
-            ViewBag.Id = new SelectList(Catecontext.ListOfProductCates(), "Id", "Name");
+            ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
             return View(prod);
         }
 
@@ -51,8 +51,8 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                context.InsertProduct(prod);
-                context.CommitToCache();
+                context.Insert(prod);
+                context.Commit();
 
                 return RedirectToAction("Index");
             }
@@ -60,7 +60,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Edit(string Id)
         {
-            var prod = context.FindProd(Id);
+            var prod = context.Find(Id);
 
             if (prod == null)
             {
@@ -68,10 +68,11 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                ProductManagerViewModel viewModel = new ProductManagerViewModel();
-                viewModel.Product = prod;
-                viewModel.ProductCates = Catecontext.ListOfProductCates();
-                return View(viewModel);
+                //ProductManagerViewModel viewModel = new ProductManagerViewModel();
+                //viewModel.Product = prod;
+                //viewModel.ProductCates = Catecontext.Collection();
+                ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
+                return View(prod);
             }
         }
 
@@ -81,7 +82,7 @@ namespace MyShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Product p, string Id)
         {
-            var prodToEdit = context.FindProd(Id);
+            var prodToEdit = context.Find(Id);
 
             if (prodToEdit != null)
             {
@@ -100,7 +101,7 @@ namespace MyShop.WebUI.Controllers
                     prodToEdit.Price = p.Price;
                     prodToEdit.Description = p.Description;
 
-                    context.CommitToCache();
+                    context.Commit();
 
                     return RedirectToAction("Index");
                 }
@@ -115,7 +116,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Delete(string Id)
         {
-            var prodToDelete = context.FindProd(Id);
+            var prodToDelete = context.Find(Id);
             if (prodToDelete == null)
             {
                 throw new Exception("Product does not exist!");
@@ -132,7 +133,7 @@ namespace MyShop.WebUI.Controllers
         [ActionName("Delete")]
         public ActionResult ConfrimDelete(string Id)
         {
-            var prodToDelete = context.FindProd(Id);
+            var prodToDelete = context.Find(Id);
 
             if (prodToDelete == null)
             {
@@ -140,8 +141,8 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                context.Delete(Id);
-                context.CommitToCache();
+                context.Delete(prodToDelete);
+                context.Commit();
                 return RedirectToAction("Index");
             }
         }
