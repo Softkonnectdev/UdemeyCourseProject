@@ -12,11 +12,16 @@ namespace MyShop.WebUI.Controllers
     public class ProductCategoryManagerController : Controller
     {
         IRepository<ProductCategory> context;
-        public ProductCategoryManagerController()
-        {
-            context = new InMemoryRepository<ProductCategory>();
-        }
 
+        //public ProductCategoryManagerController()
+        //{
+        //    context = new InMemoryRepository<ProductCategory>();
+        //}
+
+        public ProductCategoryManagerController(IRepository<ProductCategory> context)
+        {
+            this.context = context;
+        }
 
         // GET: ProductManager
         public ActionResult Index()
@@ -99,37 +104,40 @@ namespace MyShop.WebUI.Controllers
         }
 
 
+
+
         public ActionResult Delete(string Id)
         {
-            var prodCateToDelete = context.Find(Id);
-            if (prodCateToDelete == null)
-            {
-                throw new Exception("Product Category does not exist!");
-            }
+            ProductCategory productCategoryToDelete = context.Find(Id);
 
+            if (productCategoryToDelete == null)
+            {
+                return HttpNotFound();
+            }
             else
             {
-                return View(prodCateToDelete);
+                return View(productCategoryToDelete);
             }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        public ActionResult ConfrimDelete(string Id)
+        public ActionResult ConfirmDelete(string Id)
         {
-            var prodCateToDelete = context.Find(Id);
+            ProductCategory productCategoryToDelete = context.Find(Id);
 
-            if (prodCateToDelete == null)
+            if (productCategoryToDelete == null)
             {
-                throw new Exception("Product Category not found!");
+                return HttpNotFound();
             }
             else
             {
-                context.Delete(prodCateToDelete);
+                context.Delete(Id);
                 context.Commit();
                 return RedirectToAction("Index");
             }
         }
+        
     }
 }

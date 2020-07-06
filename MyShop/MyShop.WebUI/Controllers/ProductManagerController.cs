@@ -8,6 +8,7 @@ using MyShop.DataAccess.InMemory;
 using MyShop.Core.Contracts;
 using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
+using MyShop.DataAccess.SQL;
 
 namespace MyShop.WebUI.Controllers
 {
@@ -16,6 +17,7 @@ namespace MyShop.WebUI.Controllers
 
         IRepository<Product> context;
         IRepository<ProductCategory> Catecontext;
+
         public ProductManagerController(IRepository<Product> Prodcontext, IRepository<ProductCategory> ProdCatecontext)
         {
             context = Prodcontext;
@@ -32,13 +34,15 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Create()
         {
-            //ProductManagerViewModel viewModel = new ProductManagerViewModel();
+            Product viewModel = new Product();
 
-            //viewModel.ProductCates = Catecontext.ListOfProductCates();
             //viewModel.Product = new Product();
-            Product prod = new Product();
-            ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
-            return View(prod);
+            //viewModel.ProductCates = Catecontext.Collection();
+
+            ViewBag.Category = new SelectList(Catecontext.Collection(), "Name", "Id");
+            return View(viewModel);
+            //Product prod = new Product();
+           
         }
 
 
@@ -52,6 +56,7 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
+                
                 context.Insert(prod);
                 context.Commit();
 
@@ -69,11 +74,14 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                //ProductManagerViewModel viewModel = new ProductManagerViewModel();
-                //viewModel.Product = prod;
+               // Product viewModel = new Product();
+                //viewModel.Product = new Product();
                 //viewModel.ProductCates = Catecontext.Collection();
-                ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
+                ViewBag.Category = new SelectList(Catecontext.Collection(), "Name", "Id");
                 return View(prod);
+
+            //    ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
+            //    return View(prod);
             }
         }
 
@@ -117,15 +125,15 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Delete(string Id)
         {
-            var prodToDelete = context.Find(Id);
-            if (prodToDelete == null)
-            {
-                throw new Exception("Product does not exist!");
-            }
+            Product productToDelete = context.Find(Id);
 
+            if (productToDelete == null)
+            {
+                return HttpNotFound();
+            }
             else
             {
-                return View(prodToDelete);
+                return View(productToDelete);
             }
         }
 
@@ -134,15 +142,16 @@ namespace MyShop.WebUI.Controllers
         [ActionName("Delete")]
         public ActionResult ConfrimDelete(string Id)
         {
-            var prodToDelete = context.Find(Id);
+            
+            Product productToDelete = context.Find(Id);
 
-            if (prodToDelete == null)
+            if (productToDelete == null)
             {
-                throw new Exception("Product not found!");
+                return HttpNotFound();
             }
             else
             {
-                context.Delete(prodToDelete);
+                context.Delete(Id);
                 context.Commit();
                 return RedirectToAction("Index");
             }
