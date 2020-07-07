@@ -9,6 +9,7 @@ using MyShop.Core.Contracts;
 using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
 using MyShop.DataAccess.SQL;
+using System.IO;
 
 namespace MyShop.WebUI.Controllers
 {
@@ -39,7 +40,7 @@ namespace MyShop.WebUI.Controllers
             //viewModel.Product = new Product();
             //viewModel.ProductCates = Catecontext.Collection();
 
-            ViewBag.Category = new SelectList(Catecontext.Collection(), "Name", "Id");
+            ViewBag.Category = new SelectList(Catecontext.Collection(), "Id", "Name");
             return View(viewModel);
             //Product prod = new Product();
            
@@ -48,7 +49,7 @@ namespace MyShop.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Product prod)
+        public ActionResult Create(Product prod, HttpPostedFileBase file)
         {
             if (!ModelState.IsValid)
             {
@@ -56,7 +57,13 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                
+
+                if (file != null)
+                {
+                    prod.Image = prod.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + prod.Image);
+                }
+
                 context.Insert(prod);
                 context.Commit();
 
@@ -77,7 +84,7 @@ namespace MyShop.WebUI.Controllers
                // Product viewModel = new Product();
                 //viewModel.Product = new Product();
                 //viewModel.ProductCates = Catecontext.Collection();
-                ViewBag.Category = new SelectList(Catecontext.Collection(), "Name", "Id");
+                ViewBag.Category = new SelectList(Catecontext.Collection(), "Id", "Name");
                 return View(prod);
 
             //    ViewBag.Id = new SelectList(Catecontext.Collection(), "Id", "Name");
@@ -89,7 +96,7 @@ namespace MyShop.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Product p, string Id)
+        public ActionResult Edit(Product p, string Id, HttpPostedFileBase file)
         {
             var prodToEdit = context.Find(Id);
 
@@ -104,9 +111,15 @@ namespace MyShop.WebUI.Controllers
 
                 else
                 {
+
+                    if (file != null)
+                    {
+                        p.Image = p.Id + Path.GetExtension(file.FileName);
+                        file.SaveAs(Server.MapPath("//Content//ProductImages//") + p.Image);
+                    }
+
                     prodToEdit.Name = p.Name;
                     prodToEdit.Category = p.Category;
-                    prodToEdit.Image = p.Image;
                     prodToEdit.Price = p.Price;
                     prodToEdit.Description = p.Description;
 
