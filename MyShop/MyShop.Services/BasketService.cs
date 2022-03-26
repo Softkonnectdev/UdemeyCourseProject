@@ -12,6 +12,7 @@ namespace MyShop.Services
 {
     public class BasketService : IBasketService
     {
+      
         IRepository<Product> productContext;
         IRepository<Basket> basketContext;
 
@@ -115,9 +116,10 @@ namespace MyShop.Services
 
             if (basket != null)
             {
-                var result = (from b in basket.BasketItems join 
-                              p in productContext.Collection() 
-                              on b.ProductId equals p.Id
+                var result = (from b in basket.BasketItems
+                              join
+ p in productContext.Collection()
+ on b.ProductId equals p.Id
                               select new BasketItemViewModel()
                               {
                                   Id = b.Id,
@@ -135,17 +137,18 @@ namespace MyShop.Services
         public BasketSummaryViewModel GetBasketSummary(HttpContextBase httpContext)
         {
             Basket basket = GetBasket(httpContext, false);
-            BasketSummaryViewModel model = new BasketSummaryViewModel(0, 0); 
+            BasketSummaryViewModel model = new BasketSummaryViewModel(0, 0);
 
             if (basket != null)
             {
                 int? basketCount = (from a in basket.BasketItems
                                     select a.Quantity).Sum();
 
-                decimal? basketTotal = (from item in basket.BasketItems join
-                                       prod in productContext.Collection() on
-                                       item.ProductId equals prod.Id
-                                       select item.Quantity * prod.Price).Sum();
+                decimal? basketTotal = (from item in basket.BasketItems
+                                        join
+       prod in productContext.Collection() on
+       item.ProductId equals prod.Id
+                                        select item.Quantity * prod.Price).Sum();
 
                 model.BasketCount = basketCount ?? 0;
                 model.BasketTotalValue = basketTotal ?? decimal.Zero;
@@ -157,6 +160,12 @@ namespace MyShop.Services
             {
                 return model;
             }
+        }
+
+        public void ClearBasket(HttpContextBase httpContext)
+        {
+            Basket basket = GetBasket(httpContext, false);
+            basket.BasketItems.Clear();
         }
     }
 }

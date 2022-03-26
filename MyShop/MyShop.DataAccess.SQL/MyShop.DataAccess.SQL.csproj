@@ -45,6 +45,8 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,17 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContext.cs" />
-    <Compile Include="Migrations\202006240135184_Initial.cs" />
-    <Compile Include="Migrations\202006240135184_Initial.designer.cs">
-      <DependentUpon>202006240135184_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202007092107043_AddBasket.cs" />
-    <Compile Include="Migrations\202007092107043_AddBasket.designer.cs">
-      <DependentUpon>202007092107043_AddBasket.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202007142140373_Customer.cs" />
-    <Compile Include="Migrations\202007142140373_Customer.designer.cs">
-      <DependentUpon>202007142140373_Customer.cs</DependentUpon>
+    <Compile Include="Migrations\202103161055061_initial.cs" />
+    <Compile Include="Migrations\202103161055061_initial.designer.cs">
+      <DependentUpon>202103161055061_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,14 +75,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202006240135184_Initial.resx">
-      <DependentUpon>202006240135184_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202007092107043_AddBasket.resx">
-      <DependentUpon>202007092107043_AddBasket.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202007142140373_Customer.resx">
-      <DependentUpon>202007142140373_Customer.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202103161055061_initial.resx">
+      <DependentUpon>202103161055061_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
